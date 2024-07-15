@@ -1,4 +1,4 @@
-import { chart, watchSymbol } from "../api";
+import { chart, watchSymbol } from "./api";
 import { SymbolInfo, Period } from "@klinecharts/pro";
 import { KLineData } from "klinecharts";
 

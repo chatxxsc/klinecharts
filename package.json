@@ -10,12 +10,17 @@
     "deploy": "npm run build && gh-pages -d dist"
   },
   "devDependencies": {
+    "@types/ws": "^8.5.11",
+    "gh-pages": "^6.1.1",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0",
-    "gh-pages": "^6.1.1"
+    "vite": "^5.2.0"
   },
   "dependencies": {
     "@klinecharts/pro": "^0.1.1",
-    "klinecharts": "^9.8.6"
+    "antd": "^5.19.2",
+    "axios": "^1.7.2",
+    "express": "^4.19.2",
+    "klinecharts": "^9.8.6",
+    "ws": "^8.18.0"
   }
 }
