@@ -14,7 +14,7 @@ app.use(cors(corsOptions));
 
 // Middleware to handle CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept",

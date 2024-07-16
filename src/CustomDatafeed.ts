@@ -61,7 +61,7 @@ export class CustomDatafeed {
     period: Period,
     callback: DatafeedSubscribeCallback,
   ): void {
-    this.ws = new WebSocket("wss://127.0.0.1:3001/ws");
+    this.ws = new WebSocket("ws://localhost:3001/ws");
     console.log(this.ws);
 
     this.ws.onclose = () => {
