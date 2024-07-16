@@ -69,11 +69,11 @@ app.use("/kline-history", async (req, res) => {
     res.status(500).send("Error fetching data from OKX API");
   }
 });
-app.listen(3000, () => {
+app.listen(4000, () => {
   console.log("CORS proxy server is running on port 4000");
 });
 
-const server = app.listen(3001, () => {
+const server = app.listen(4001, () => {
   console.log("CORS proxy server is running on port 4001");
 });
 
