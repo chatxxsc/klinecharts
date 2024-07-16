@@ -6,7 +6,7 @@ import { ResponseData } from "../interface/http";
 interface Config extends AxiosRequestConfig {
   errorTip?: string; // 错误提示内容，获取后端数据失败时，
 }
-export const rootPath = "https://27vrr7-3000.csb.app";
+export const rootPath = "http://127.0.0.1:3000";
 
 export const http = Axios.create({
   baseURL: rootPath,

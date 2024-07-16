@@ -1,14 +1,20 @@
 import express from "../node_modules/express/index.js";
-// import { createProxyMiddleware } from "../node_modules/http-proxy-middleware/dist/index.js";
+import cors from "../node_modules/cors/lib/index.js"; 
 import axios from "axios";
 import { WebSocketServer } from "ws";
 import WebSocket from "ws"; // To create client WebSocket
 
 const app = express();
+const corsOptions = {
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  credentials: true, // This is needed to allow cookies to be sent in CORS requests
+};
+
+app.use(cors(corsOptions));
 
 // Middleware to handle CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://27vrr7-5173.csb.app");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept",
