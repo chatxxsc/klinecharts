@@ -6,7 +6,7 @@ import WebSocket from "ws"; // To create client WebSocket
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173","http://119.12.174.136:4002"],
   credentials: true, // This is needed to allow cookies to be sent in CORS requests
 };
 
@@ -70,11 +70,11 @@ app.use("/kline-history", async (req, res) => {
   }
 });
 app.listen(3000, () => {
-  console.log("CORS proxy server is running on port 3000");
+  console.log("CORS proxy server is running on port 4000");
 });
 
 const server = app.listen(3001, () => {
-  console.log("CORS proxy server is running on port 3001");
+  console.log("CORS proxy server is running on port 4001");
 });
 
 // WebSocket Server
