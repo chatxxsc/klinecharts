@@ -1,4 +1,4 @@
-import express from "../node_modules/express/index.js";
+import express from 'express';
 import cors from "../node_modules/cors/lib/index.js"; 
 import axios from "axios";
 import { WebSocketServer } from "ws";
@@ -6,7 +6,7 @@ import WebSocket from "ws"; // To create client WebSocket
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173","http://119.12.174.136:4002"],
+  origin: ["http://localhost:5173", "http://127.0.0.1:5173","http://119.12.174.136:10086"],
   credentials: true, // This is needed to allow cookies to be sent in CORS requests
 };
 
