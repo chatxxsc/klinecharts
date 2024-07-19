@@ -103,7 +103,7 @@ const columns: TableProps<DataType>['columns'] = [
     key: 'nicname',
   },
   {
-    title: '操作',
+    title: '操作(待定)',
     key: 'action',
     render: (_, record) => (
       <Space size="middle">
@@ -213,6 +213,15 @@ const Historydata: HistoryData[] = [
     cTime:"07-18 10:10",
     tags:["okx","limit","买入开多"],
     nickName:"金闪闪弗利萨"
+  },  {
+    key:2,
+    orderid: 2,
+    instId: 'BTC-USDT-SWAP',
+    posSide: '空',
+    sellprice: "3492.59",
+    cTime:"07-18 10:10",
+    tags:["okx","limit","卖出开空"],
+    nickName:"金闪闪弗利萨"
   }]
 // const rowSelection = {
 //   onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
@@ -264,7 +273,7 @@ const App: React.FC = () => {
         setLoading2(false);
       }, 1000);
     };
-
+    const hasSelected = selectedRowKeys.length > 0;
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
       console.log('selectedRowKeys changed: ', newSelectedRowKeys);
@@ -275,7 +284,30 @@ const App: React.FC = () => {
       selectedRowKeys,
       onChange: onSelectChange,
     };
-    const hasSelected = selectedRowKeys.length > 0;
+
+    
+    const [HistoryselectedRowKeys, setHistorySelectedRowKeys] = useState<React.Key[]>([]);
+    const [Historyloading, HistorysetLoading] = useState(false);
+  
+    const Historystart = () => {
+      HistorysetLoading(true);
+      // ajax request after empty completing
+      setTimeout(() => {
+        setHistorySelectedRowKeys([]);
+        HistorysetLoading(false);
+      }, 1000);
+    };
+    const HistoryhasSelected = HistoryselectedRowKeys.length > 0;
+
+    const HistoryonSelectChange = (newSelectedRowKeys: React.Key[]) => {
+      console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+      setHistorySelectedRowKeys(newSelectedRowKeys);
+    };
+
+    const HistoryrowSelection = {
+      HistoryselectedRowKeys,
+      onChange: HistoryonSelectChange,
+    };
 
   useEffect(() => {
     if (!initialized) {
@@ -283,6 +315,22 @@ const App: React.FC = () => {
       setInitialized(true);
     }
   }, [initialized]);
+
+  const [tagsData, setTagsData] = useState(['Movies', 'Books', 'Music', 'Sports','Movies1', 'Books2', 'Music3', 'Sports4']);
+
+  const [selectedTags, setSelectedTags] = useState<string[]>(['']);
+  const handleChange = (tag: string, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [...selectedTags, tag]
+      : selectedTags.filter((t) => t !== tag);
+    console.log('You are interested in: ', nextSelectedTags);
+    setSelectedTags(nextSelectedTags);
+  };
+
+  // 添加新Tag
+  const addTag = (Tagto:string) => {
+    setTagsData(prevTags => [...prevTags, Tagto]);
+  };
 
   return (
     <Layout>
@@ -332,6 +380,19 @@ const App: React.FC = () => {
                       <Button type="primary">更新</Button>
                       <Button type="primary">删除</Button>
                 </Flex>
+                <Divider orientation="left">显示：{tagsData.length}个</Divider>
+                {/* <button onClick={() => addTag('NewTag')}>添加Tag</button> */}
+                <Flex gap={10} wrap align="center">
+                {tagsData.map<React.ReactNode>((tag) => (
+                  <Tag.CheckableTag
+                    key={tag}
+                    checked={selectedTags.includes(tag)}
+                    onChange={(checked) => handleChange(tag, checked)}
+                  >
+                    {tag}
+                  </Tag.CheckableTag>
+                ))}
+              </Flex>
               </div>
             </div>
           </div>
@@ -368,9 +429,8 @@ const App: React.FC = () => {
                   <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading2}>
                     更新至图表
                   </Button>
-                  <Button type="primary">清空图表</Button>
-                  </Flex>
-                    <span style={{ marginLeft: 8 }}>
+                </Flex>
+                  <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `选中 ${selectedRowKeys.length} 个` : ''}
                   </span>
                 </div>
@@ -391,7 +451,7 @@ const App: React.FC = () => {
                 }}
               >
                 <Flex wrap gap="small">
-                <Input placeholder="http://okx浪浪" allowClear size="large" style= {{width :"600px"}}/>
+                <Input placeholder="http://okx浪浪操作记录" allowClear size="large" style= {{width :"600px"}}/>
               <Button type="primary" size="large">查询操作记录</Button>
               </Flex>
               </div>
@@ -403,7 +463,17 @@ const App: React.FC = () => {
                   borderRadius: borderRadiusLG,
                 }}
               >
-                <Table columns={Historycolumns} dataSource={Historydata} />
+                <div style={{ marginBottom: 16 }}>
+                <Flex wrap gap="small">
+                  <Button type="primary" onClick={Historystart} disabled={!HistoryhasSelected} loading={Historyloading}>
+                    更新至图表
+                  </Button>
+                </Flex>
+                  <span style={{ marginLeft: 8 }}>
+                    {HistoryhasSelected ? `选中 ${HistoryselectedRowKeys.length} 个` : ''}
+                  </span>
+                </div>
+                <Table rowSelection={HistoryrowSelection} columns={Historycolumns} dataSource={Historydata} />
               </div>
             </div>
           </div>
