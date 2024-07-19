@@ -19,10 +19,15 @@ export class CustomDatafeed {
    * exchange: a.baseCcy,
    * type: a.instType,
    */
-  searchSymbols(): any {
-    // 根据模糊字段远程拉取标的数据
-    return watchSymbol.query();
-  }
+  searchSymbols(search?: string): Promise<SymbolInfo[]> {
+      return watchSymbol.query().then((data: any) => {
+        if (!search) {
+          return data;
+        }
+        return data.map((item: any) => item.ticker.includes(search) ? item : null).filter((item: any) => item !== null) as SymbolInfo[];
+      })
+    }
+  
 
   getHistoryKLineData(
     symbol: SymbolInfo,

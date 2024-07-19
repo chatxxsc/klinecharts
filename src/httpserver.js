@@ -6,7 +6,7 @@ import WebSocket from "ws"; // To create client WebSocket
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://127.0.0.1:5173","http://119.12.174.136:10086"],
+  origin: ["http://localhost:4002", "http://192.168.10.108:4002","http://119.12.174.136:10086"],
   credentials: true, // This is needed to allow cookies to be sent in CORS requests
 };
 
@@ -35,14 +35,18 @@ app.use("/api", async (req, res) => {
     const response = await axios.get(
       "https://www.okx.com/api/v5/public/instruments?instType=SPOT",
     );
-    const data = response.data.data.map((a) => ({
+    const data = response.data.data.map((a) => (
+      {
       ticker: a.instId,
-      name: a.name,
-      shortName: a.baseCcy,
+      name: a.instId,
+      shortName: a.instId,
       market: "okx",
       exchange: a.baseCcy,
-      type: a.instType,
+      priceCurrency: a.instId,
+      type:a.instType,
+      logo:''
     }));
+    console.log(data)
     res.json(data);
   } catch (error) {
     console.error("Error fetching data from OKX API:", error);
