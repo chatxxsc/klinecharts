@@ -46,7 +46,7 @@ app.use("/api", async (req, res) => {
       type:a.instType,
       logo:''
     }));
-    console.log(data)
+    // console.log(data)
     res.json(data);
   } catch (error) {
     console.error("Error fetching data from OKX API:", error);
@@ -73,6 +73,43 @@ app.use("/kline-history", async (req, res) => {
     res.status(500).send("Error fetching data from OKX API");
   }
 });
+
+
+// {
+//   "alias": "",
+//   "avgPx": "25.983",
+//   "cTime": "1721180380570",
+//   "instId": "INJ-USDT-SWAP",
+//   "instType": "SWAP",
+//   "lever": "20",
+//   "liqPx": "",
+//   "mgnMode": "cross",
+//   "pos": "1",
+//   "posCcy": "",
+//   "posSide": "long",
+//   "posSpace": "0.0777424227413921",
+//   "uplRatio": "0.143940268637186"
+// }
+app.use("/positions", async (req, res) => {
+  const { uniqueName } = req.query;
+  // console.log(req)
+  if (!uniqueName) {
+    return res.status(400).send("Missing required query parameters");
+  }
+  const apiUrl = `https://www.okx.com/priapi/v5/ecotrade/public/positions-v2?limit=10&uniqueName=${uniqueName}`
+
+  try {
+    const response = await axios.get(apiUrl);
+    const data = response.data.data;
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching data from OKX API:", error);
+    res.status(500).send("Error fetching data from OKX API");
+  }
+}
+);
+
+
 app.listen(4000, () => {
   console.log("CORS proxy server is running on port 4000");
 });

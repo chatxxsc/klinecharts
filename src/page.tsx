@@ -7,6 +7,7 @@ import setupApp from './app';
 import '@klinecharts/pro/dist/klinecharts-pro.css';
 import './index.css'
 
+import { watchSymbol } from "./api";
 
 const { Header, Content, Footer } = Layout;
 
@@ -114,30 +115,26 @@ const columns: TableProps<DataType>['columns'] = [
     ),
   },
 ];
-const data: DataType[] = [
-  {
-    key: 1,
-    orderid: 1,
-    symbol: 'BTCUSDT',
-    open: "64,561.5",
-    sellprice: '68,064.3',
-    money: "-12.49%",
-    time:"07-18 10:10",
-    tags:["okx","空","100x"],
-    nicname:"金闪闪弗利萨"
-  },
-  {
-    key: 2,
-    orderid: 2,
-    symbol: 'ETHUSDT',
-    open: "64,561.5",
-    sellprice: '68,064.3',
-    money: "12.49%",
-    time:"07-18 10:10",
-    tags:["okx","多","100x"],
-    nicname:"金闪闪弗利萨"
-  }
-];
+
+// nav2 数据表的值
+let data: DataType[] = [];
+const nicnameid = "918AA1BB59EA9BE0"
+watchSymbol.positions(nicnameid).then((response: any) => {data = response[0].posData.map((item: any,index:number) => {
+  return {
+    key: index,
+    orderid: index,
+    symbol: item.instId,
+    open: item.avgPx,
+    sellprice: item.liqPx,
+    money: item.uplRatio,
+    time:item.cTime,
+    tags:["okx",item.posSide,item.lever],
+    nicname:nicnameid,
+}; 
+});
+});
+
+console.log(data);
 
 interface HistoryData {
   key: React.Key;
@@ -203,6 +200,7 @@ const Historycolumns: TableProps<HistoryData>['columns'] = [
     key: 'nickName',
   }
 ]
+
 const Historydata: HistoryData[] = [
   {
     key: 1,
@@ -429,6 +427,17 @@ const App: React.FC = () => {
                   <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading2}>
                     更新至图表
                   </Button>
+                  <Flex gap={10} wrap align="center">
+                  {tagsData.map<React.ReactNode>((tag) => (
+                    <Tag.CheckableTag
+                      key={tag}
+                      checked={selectedTags.includes(tag)}
+                      onChange={(checked) => handleChange(tag, checked)}
+                    >
+                      {tag}
+                    </Tag.CheckableTag>
+                  ))}
+                </Flex>
                 </Flex>
                   <span style={{ marginLeft: 8 }}>
                     {hasSelected ? `选中 ${selectedRowKeys.length} 个` : ''}
@@ -468,6 +477,17 @@ const App: React.FC = () => {
                   <Button type="primary" onClick={Historystart} disabled={!HistoryhasSelected} loading={Historyloading}>
                     更新至图表
                   </Button>
+                  <Flex gap={10} wrap align="center">
+                {tagsData.map<React.ReactNode>((tag) => (
+                  <Tag.CheckableTag
+                    key={tag}
+                    checked={selectedTags.includes(tag)}
+                    onChange={(checked) => handleChange(tag, checked)}
+                  >
+                    {tag}
+                  </Tag.CheckableTag>
+                ))}
+              </Flex>
                 </Flex>
                   <span style={{ marginLeft: 8 }}>
                     {HistoryhasSelected ? `选中 ${HistoryselectedRowKeys.length} 个` : ''}
