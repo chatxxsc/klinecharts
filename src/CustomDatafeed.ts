@@ -22,7 +22,7 @@ export class CustomDatafeed {
   searchSymbols(search?: string): Promise<SymbolInfo[]> {
       return watchSymbol.query().then((data: any) => {
         if (!search) {
-          return data;
+          return data.map((item: any) => item.ticker.includes("USDT") ? item : null).filter((item: any) => item !== null) as SymbolInfo[];;
         }
         return data.map((item: any) => item.ticker.includes(search) ? item : null).filter((item: any) => item !== null) as SymbolInfo[];
       })
