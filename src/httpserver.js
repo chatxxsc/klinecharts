@@ -14,7 +14,7 @@ app.use(cors(corsOptions));
 
 // Middleware to handle CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept",
@@ -109,6 +109,33 @@ app.use("/positions", async (req, res) => {
 }
 );
 
+app.use("/trade-records", async (req, res) => {
+  const {uniqueName} = req.query;
+
+  const difftime = 7948799000;
+  let nowHistory = new Date();
+  nowHistory.setHours(23);
+  nowHistory.setMinutes(59);
+  nowHistory.setSeconds(59);
+  nowHistory.setMilliseconds(0);
+  let nowHistorystamp = nowHistory.getTime();
+  let everHistorystamp = nowHistorystamp - difftime;
+  let currentTimestamp = Date.now();
+  if (!uniqueName) {
+    return res.status(400).send("Missing required query parameters");
+  }
+  const apiUrl = `https://www.okx.com/priapi/v5/ecotrade/public/trade-records?instType=SWAP&limit=20&startModify=${everHistorystamp}&endModify=${nowHistorystamp}&uniqueName=${uniqueName}&t=${currentTimestamp}`
+  // console.log(apiUrl)
+  try {
+    const response = await axios.get(apiUrl);
+    const data = response.data.data;
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching data from OKX API:", error);
+    res.status(500).send("Error fetching data from OKX API");
+  }
+}
+);
 
 app.listen(4000, () => {
   console.log("CORS proxy server is running on port 4000");

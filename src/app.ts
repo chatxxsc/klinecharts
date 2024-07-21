@@ -6,9 +6,7 @@ export default function setupApp (root: HTMLDivElement) {
     locale = 'en-US'
   }
   root.innerHTML = `
-    <div class="github"></div>
-    <div id="container">
-    </div>
+    <div id="container"></div>
   `
   const options = {
     container: 'container',
