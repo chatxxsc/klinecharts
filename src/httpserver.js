@@ -62,7 +62,7 @@ app.use("/kline-history", async (req, res) => {
     return res.status(400).send("Missing required query parameters");
   }
 
-  const apiUrl = `https://www.okx.com/priapi/v5/market/candles?instId=${instId}-SWAP&bar=${bar}&before=${before}&after=${after}&limit=200`;
+  const apiUrl = `https://www.okx.com/api/v5/market/history-candles?instId=${instId}-SWAP&bar=${bar}&before=${before}&after=${after}&limit=200`;
 
   try {
     const response = await axios.get(apiUrl);

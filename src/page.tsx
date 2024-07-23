@@ -9,6 +9,13 @@ import '@klinecharts/pro/dist/klinecharts-pro.css';
 import './index.css'
 
 import { watchSymbol } from "./api";
+import jsonDatatag from './testtagdata.json';
+import jsonDataname from './testtagname.json';
+
+const tagdiskdata = jsonDatatag;
+
+const tagdiskname = jsonDataname;
+
 
 const { Header, Content, Footer } = Layout;
 const { TextArea } = Input;
@@ -222,121 +229,6 @@ const Historycolumns: TableProps<HistoryData>['columns'] = [
   }
 ]
 
-// 定义函数
-function checkOnText(coordinate: any, attrs: any, styles: any) {
-  var texts:any = [];
-  texts = texts.concat(attrs);
-  for (var i = 0; i < texts.length; i++) {
-    var { x, y, width, height } = getTextRect(texts[i], styles);
-    if (coordinate.x >= x &&
-        coordinate.x <= x + width &&
-        coordinate.y >= y &&
-        coordinate.y <= y + height) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function drawwithText(ctx: any, attrs: any, styles: any) {
-  var T = ctx,
-      a = { x: attrs.x, y: attrs.y },
-      Z = attrs.text.side;
-  T.font = "12px Roboto";
-  T.fillStyle = attrs.text.color;
-  T.strokeStyle = attrs.text.color;
-  var o = Z;
-
-  var c = T.measureText(o).width,
-      n = a.x,
-      r = a.y - 6;
-  T.setLineDash([3, 3]);
-  T.beginPath();
-  T.moveTo(n, r);
-  T.lineTo(n, r - 50);
-  T.closePath();
-  T.stroke();
-  r -= 50;
-  T.beginPath();
-  T.moveTo(n, r);
-  T.lineTo(n - 4, r - 5);
-  T.lineTo(n + 4, r - 5);
-  T.closePath();
-  T.fill();
-  var i = n - c / 2 - 6,
-      l = r - 5 - 28,
-      s = c + 12,
-      m = 28,
-      d = 5;
-  T.beginPath();
-  T.moveTo(i + d, l);
-  T.arcTo(i + s, l, i + s, l + m, d);
-  T.arcTo(i + s, l + m, i, l + m, d);
-  T.arcTo(i, l + m, i, l, d);
-  T.arcTo(i, l, i + s, l, d);
-  T.closePath();
-  T.fill();
-  T.fillStyle = "#fff";
-  T.textBaseline = "middle";
-  T.textAlign = "center";
-  T.fillText(o, n, r - 5 - 14);
-}
-
-const text = {
-  name: 'xxscTextline',
-  checkEventOn: checkOnText,
-  draw: function (ctx: any, attrs: any, styles: any) {
-    drawwithText(ctx, attrs, styles);
-  }
-};
-
-
-const priceLine = {
-  name: 'texttag',
-  totalStep: 2,
-  needDefaultPointFigure: true,
-  needDefaultXAxisFigure: true,
-  needDefaultYAxisFigure: true,
-  createPointFigures: function (_a:any) {
-      var coordinates = _a.coordinates,overlay = _a.overlay;   
-      var figures = [];
-      for (var i = 0; i < overlay.points.length; i++) {
-          var value = overlay.extendData[i]
-
-          figures.push({
-              type: 'xxscTextline',
-              ignoreEvent: true,
-              attrs: {
-                  x: coordinates[i].x,
-                  y: coordinates[i].y,
-                  text: value
-              },
-              styles: {
-                color: "#00d0aa"
-              }
-
-          });
-      }
-
-      return figures;
-  }
-};
-
-const addtag = {
-  name: 'texttag',
-  id: 'texttag_1',
-  groupId: 'texttag',
-  points: [],
-  extendData : [],
-  styles: {
-    xxscTextline: {
-      color: '#f00'
-    }},
-  lock: false,
-  visible: true,
-  zLevel: 0
-}
-
 //main
 const App: React.FC = () => {
   const removebutton = () => {
@@ -351,7 +243,7 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  const [tagdata, settagdata] = useState<listtagdata>({});
+  const [tagdata, settagdata] = useState<listtagdata>(tagdiskdata);
 
   const [selectedKey, setSelectedKey] = useState('1');
   const [initialized, setInitialized] = useState(false);
@@ -422,7 +314,7 @@ const App: React.FC = () => {
     const [selectedRowdata, setselectedRowdata] = useState<initDataType[]>([]);
     const [loading2, setLoading2] = useState(false);
   
-    const [tagsData, setTagsData] = useState<Tag[]>([]);
+    const [tagsData, setTagsData] = useState<Tag[]>(tagdiskname);
 
     const [selectedTags, setSelectedTags] = useState<string[]>(['']);
     const handleChange = (tag: string, checked: boolean) => {
@@ -467,12 +359,11 @@ const App: React.FC = () => {
           timestamp:parseInt(item.hidden),value:parseFloat(item.open)
         })),
         dataclor:selectedRowdata.map((item:initDataType) => {
-          let colorstr:string;
+
           if (item.tags[1].includes("short")){
             return {color:"#f75252",side:`买入开空@${item.open}`}
           }
           else{
-            colorstr ="#00d0aa";
             return {color:"#00d0aa",side:`买入开多@${item.open}`}
           }
           }
@@ -611,7 +502,6 @@ const App: React.FC = () => {
       setInitialized(true);
     }
   }, [initialized]);
-
 
   return (
     <Layout>
