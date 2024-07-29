@@ -493,7 +493,57 @@ const App: React.FC = () => {
     const nav4input = useRef<InputRef>(null);
     
     const jsonfamate =  () => {
-      const valuenav3input = nav4input.current?.input?.value || '';
+      const valuenav4input = nav4input.current.resizableTextArea.textArea.value;
+      const keys: string[] = ["symbol", "typeStr", "fieldPrice", "side", "fieldAmount", "type", "orderDate"];
+      interface CsvRecord {
+        symbol: string;
+        typeStr: string;
+        fieldPrice: string;
+        side: string;
+        fieldAmount: string;
+        type: string;
+        orderDate: string;
+      }
+
+      if (valuenav4input){
+        const lines: string[] = valuenav4input.split('\n').filter((line: string) => line.trim() !== '');
+        const result = lines.map(line => {
+          const fields = line.split('\t');
+          const obj: Partial<CsvRecord> = {};
+          keys.forEach((key, index) => {
+            obj[key as keyof CsvRecord] = fields[index];
+          });
+          return obj as CsvRecord;
+        });
+
+        const taglength = tagsData.length;
+        const tagsecname = result[0].symbol;
+        const filltagdata : syncklinetag=  {
+          id:""+taglength+tagsecname,
+          dataxy:result.map((item:CsvRecord) => ({
+            timestamp:new Date(item.orderDate).getTime(),value:parseFloat(item.fieldPrice)
+          })),
+          dataclor:result.map((item:CsvRecord) => {
+            if (item.typeStr.includes("空")){
+              return {color:"#f75252",side:`${item.typeStr}@${item.fieldPrice}`}
+            }
+            else{
+              return {color:"#00d0aa",side:`${item.typeStr}@${item.fieldPrice}`}
+            }
+            }
+          )
+        }
+        
+        const taganme:string = ""+taglength+"|"+filltagdata.dataxy.length+tagsecname
+        settagdata(prevListtagdata => ({
+          ...prevListtagdata,
+          [taganme]: filltagdata
+        }));
+        addTag(taganme);
+        console.log(tagdata);
+
+      }
+
     }
 
   useEffect(() => {
@@ -675,8 +725,8 @@ const App: React.FC = () => {
                 }}
               >
                 <Flex wrap gap="small">
-                <TextArea showCount placeholder="下单明细"  ref={nav4input} />
-              <Button type="primary" size="large" onClick={jsonfamate} >json格式化</Button>
+                <TextArea showCount placeholder="下单明细"  ref={nav4input} style={{ width: '700px' ,height: '260px' }}/>
+              <Button type="primary" size="large" onClick={jsonfamate} >导入</Button>
               </Flex>
               </div>
               <div

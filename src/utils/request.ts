@@ -6,7 +6,7 @@ import { ResponseData } from "../interface/http";
 interface Config extends AxiosRequestConfig {
   errorTip?: string; // 错误提示内容，获取后端数据失败时，
 }
-export const rootPath = "http://localhost:4000";
+export const rootPath = "http://119.12.174.136:4000";
 
 export const http = Axios.create({
   baseURL: rootPath,
