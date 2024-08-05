@@ -9,13 +9,6 @@ import '@klinecharts/pro/dist/klinecharts-pro.css';
 import './index.css'
 
 import { watchSymbol } from "./api";
-import jsonDatatag from './testtagdata.json';
-import jsonDataname from './testtagname.json';
-
-const tagdiskdata = jsonDatatag;
-
-const tagdiskname = jsonDataname;
-
 
 const { Header, Content, Footer } = Layout;
 const { TextArea } = Input;
@@ -65,6 +58,7 @@ interface initDataType {
   nicname: string;
   hidden:string;
 }
+
 const columns: TableProps<initDataType>['columns'] = [
   {
     title: '序号',
@@ -240,6 +234,17 @@ const App: React.FC = () => {
     console.log("remn成功")
   };
 
+  let tagdiskdata:listtagdata ={}
+  const tagdiskname: string[] = [];
+  const dataint = ()=>{
+    watchSymbol.gettags().then((response: any) => {
+      settagdata(response);
+      const keys = Object.keys(response);
+      setTagsData(keys)
+      console.log("updatedone")
+    });
+  }
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -314,7 +319,7 @@ const App: React.FC = () => {
     const [selectedRowdata, setselectedRowdata] = useState<initDataType[]>([]);
     const [loading2, setLoading2] = useState(false);
   
-    const [tagsData, setTagsData] = useState<Tag[]>(tagdiskname);
+    const [tagsData, setTagsData] = useState<string[]>(tagdiskname);
 
     const [selectedTags, setSelectedTags] = useState<string[]>(['']);
     const handleChange = (tag: string, checked: boolean) => {
@@ -593,7 +598,7 @@ const App: React.FC = () => {
                 <Divider orientation="left">图表操作</Divider>
                 <Flex wrap gap="small">
                      <Button type="primary">创建</Button>
-                      <Button type="primary">更新</Button>
+                      <Button type="primary" onClick={dataint}>更新</Button>
                       <Button type="primary" onClick={removebutton} >删除</Button>
                 </Flex>
                 <Divider orientation="left">显示：{tagsData.length}个</Divider>

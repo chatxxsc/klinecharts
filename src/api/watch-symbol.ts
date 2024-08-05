@@ -9,6 +9,14 @@ export function query() {
 )
 }
 
+export function gettags() {
+  console.log("ddk")
+  return request({
+    url: "/web",
+    method:"GET",
+  })
+}
+
 // {
 //   key: 1,
 //   orderid: 1,

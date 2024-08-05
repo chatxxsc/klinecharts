@@ -1,8 +1,13 @@
-import express from 'express';
+import express, { json } from 'express';
 import cors from "../node_modules/cors/lib/index.js"; 
 import axios from "axios";
 import { WebSocketServer } from "ws";
 import WebSocket from "ws"; // To create client WebSocket
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import bodyParser from 'body-parser';
 
 const app = express();
 const corsOptions = {
@@ -10,7 +15,12 @@ const corsOptions = {
   credentials: true, // This is needed to allow cookies to be sent in CORS requests
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dataFilePath = path.join(__dirname, 'testtagdata.json');
+
 app.use(cors(corsOptions));
+app.use(bodyParser.json());
 
 // Middleware to handle CORS
 app.use((req, res, next) => {
@@ -136,6 +146,50 @@ app.use("/trade-records", async (req, res) => {
   }
 }
 );
+
+app.get('/web', (req, res) => {
+  fs.readFile(dataFilePath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Error reading data file');
+    }
+    res.send(data);
+  });
+});
+
+// 处理 /write 路径，通过 POST 请求接收表单数据并更新 data.json 文件
+app.post('/write', (req, res) => {
+  const newData = req.body;
+
+  fs.readFile(dataFilePath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Error reading data file');
+    }
+
+    let jsonData;
+    try {
+      jsonData = JSON.parse(data);
+    } catch (parseErr) {
+      return res.status(500).send('Error parsing data file');
+    }
+
+    // 直接覆盖 jsonData 中的相同键名的值
+    for (const key in newData) {
+      if (jsonData[key]){
+        jsonData[key]["dataxy"] = [...jsonData[key]["dataxy"],...newData[key]["dataxy"]]
+        jsonData[key]["dataclor"] = [...jsonData[key]["dataclor"],...newData[key]["dataclor"]]
+      }else{
+        jsonData[key] = newData[key];
+      }
+    }
+
+    fs.writeFile(dataFilePath, JSON.stringify(jsonData), 'utf8', (writeErr) => {
+      if (writeErr) {
+        return res.status(500).send('Error writing data file');
+      }
+      res.json({ message: 'Data updated successfully' });
+    });
+  });
+});
 
 app.listen(4000, () => {
   console.log("CORS proxy server is running on port 4000");
